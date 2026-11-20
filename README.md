@@ -47,11 +47,15 @@ I wanted to use my MacBook like a Mac mini: close the lid, connect to it from an
 
 ## 🚀 Quick Start
 
-Run the command below, then click the moon in the menu bar and choose Keep Awake. macOS asks for your password once and the icon turns into a cup. Adjust what happens on lid close in Settings, then close the lid: the Mac keeps running.
+1. Install it:
 
-```sh
-curl -fsSL https://raw.githubusercontent.com/lucasvtiradentes/sleepless/main/scripts/install.sh | bash
-```
+   ```sh
+   curl -fsSL https://raw.githubusercontent.com/lucasvtiradentes/sleepless/main/scripts/install.sh | bash
+   ```
+
+2. Click the moon in the menu bar and choose Keep Awake; type your password once.
+3. Optionally, adjust what happens on lid close in Settings.
+4. Close the lid: the Mac keeps running.
 
 <div align="center">
 
