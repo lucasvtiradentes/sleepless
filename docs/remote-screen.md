@@ -1,6 +1,6 @@
 # See and control the Mac from an iPhone
 
-With mac-sleepless on, the Mac stays awake with the lid closed, and macOS keeps drawing the screen. This guide adds the screen itself: macOS Screen Sharing, reached over Tailscale, viewed in a VNC app on the iPhone. Everything here is free and built in.
+This guide is not part of Sleepless, which only keeps the Mac awake. With Sleepless on, the Mac stays awake with the lid closed, and macOS keeps drawing the screen. This guide adds the screen itself: macOS Screen Sharing, reached over Tailscale, viewed in a VNC app on the iPhone. Everything here is free and built in.
 
 ```mermaid
 flowchart LR
@@ -10,7 +10,7 @@ flowchart LR
 
 ## 1. Keep the Mac awake
 
-1. Install mac-sleepless with `make install`, as the README says.
+1. Install Sleepless, as the README says.
 2. Check that the menu bar shows the cup, which means Keep Awake is on.
 
 ## 2. Turn on Screen Sharing on the Mac
@@ -53,28 +53,28 @@ The iPhone first shows a macOS login window, even when the Mac is open and unloc
 
 1. Type your macOS user and password.
 2. If macOS asks, choose to share the current screen, so you land on your own desktop with your apps.
-3. With Lock the Mac on in mac-sleepless Settings, the Mac locks when the lid closes, so type your password once more on the lock screen.
+3. With Lock the Mac on in Sleepless Settings, the Mac locks when the lid closes, so type your password once more on the lock screen.
 
 ## 6. Control the Mac
 
-- Close the lid, keep mac-sleepless on, and connect from anywhere with Tailscale on in the iPhone.
+- Close the lid, keep Sleepless on, and connect from anywhere with Tailscale on in the iPhone.
 - Tap to click, drag to move the pointer, and open the keyboard from the RealVNC toolbar.
 - Pinch to zoom: the MacBook screen is large on a phone.
 - Disconnect from the RealVNC toolbar when done; the Mac keeps running.
 
 ## Troubleshooting
 
-| Symptom                            | Cause and fix                                                                               |
-|------------------------------------|---------------------------------------------------------------------------------------------|
-| Server not running or incompatible | Turn on VNC viewers may control screen with password, as in section 2                       |
-| Cannot connect at all              | Turn on Tailscale on the iPhone; check that the Mac is awake and the menu bar shows a cup   |
-| Login window every time            | Expected with the VNC password; type your macOS user and password                           |
-| Black screen at first              | mac-sleepless turned the display off; tap or move the pointer to wake it                    |
-| Mac fell asleep                    | mac-sleepless turns off below the battery level in Settings or at critical heat; plug it in |
+| Symptom                            | Cause and fix                                                                             |
+|------------------------------------|-------------------------------------------------------------------------------------------|
+| Server not running or incompatible | Turn on VNC viewers may control screen with password, as in section 2                     |
+| Cannot connect at all              | Turn on Tailscale on the iPhone; check that the Mac is awake and the menu bar shows a cup |
+| Login window every time            | Expected with the VNC password; type your macOS user and password                         |
+| Black screen at first              | Sleepless turned the display off; tap or move the pointer to wake it                      |
+| Mac fell asleep                    | Sleepless turns off below the battery level in Settings or at critical heat; plug it in   |
 
 To check the Mac side from a terminal:
 
 ```bash
 netstat -an -p tcp | grep '\.5900 '                             # Screen Sharing listening
-ioreg -rd1 -c IOPMrootDomain | grep '"SleepDisabled"'          # Yes while mac-sleepless is on
+ioreg -rd1 -c IOPMrootDomain | grep '"SleepDisabled"'          # Yes while Sleepless is on
 ```
