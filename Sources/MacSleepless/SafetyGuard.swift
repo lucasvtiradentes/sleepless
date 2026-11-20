@@ -4,8 +4,6 @@ import IOKit.ps
 /// Conditions that must end a lid-closed session, because a closed Mac in a bag cannot cool down
 /// and would otherwise drain the battery to zero.
 enum SafetyGuard {
-    static let minimumBatteryPercent = 15
-
     struct Battery {
         let percent: Int
         let onBattery: Bool
@@ -32,7 +30,7 @@ enum SafetyGuard {
         if ProcessInfo.processInfo.thermalState == .critical {
             return "Mac is too hot"
         }
-        if let battery = battery(), battery.onBattery, battery.percent < minimumBatteryPercent {
+        if let battery = battery(), battery.onBattery, battery.percent < AppSettings.minimumBattery {
             return "battery at \(battery.percent)%"
         }
         return nil
