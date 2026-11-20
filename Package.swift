@@ -3,16 +3,16 @@
 import PackageDescription
 
 let package = Package(
-    name: "mac-sleepless",
+    name: "sleepless",
     platforms: [
         .macOS(.v14)
     ],
     products: [
-        .executable(name: "mac-sleepless", targets: ["MacSleepless"])
+        .executable(name: "sleepless", targets: ["Sleepless"])
     ],
     targets: [
         .executableTarget(
-            name: "MacSleepless"
+            name: "Sleepless"
         )
     ]
 )

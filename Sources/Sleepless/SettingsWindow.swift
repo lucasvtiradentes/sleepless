@@ -37,7 +37,7 @@ final class SettingsWindow {
     func show() {
         if window == nil {
             let window = NSWindow(contentViewController: NSHostingController(rootView: SettingsView()))
-            window.title = "mac-sleepless Settings"
+            window.title = "Sleepless Settings"
             window.styleMask = [.titled, .closable]
             window.isReleasedWhenClosed = false
             window.center()

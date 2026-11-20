@@ -19,7 +19,7 @@ enum SleepControlError: LocalizedError {
 /// `caffeinate` and IOPM assertions only block idle sleep, so they are not enough with the lid closed.
 enum SleepControl {
     static let pmsetPath = "/usr/bin/pmset"
-    static let sudoersPath = "/etc/sudoers.d/mac-sleepless"
+    static let sudoersPath = "/etc/sudoers.d/sleepless"
 
     /// Reads the flag from powerd's root domain, so the menu shows the real state even when
     /// something else, such as a manual `pmset`, changed it.
@@ -68,7 +68,7 @@ enum SleepControl {
         let user = NSUserName()
         let rule =
             "\(user) ALL=(root) NOPASSWD: \(pmsetPath) -a disablesleep 0, \(pmsetPath) -a disablesleep 1\n"
-        let draft = FileManager.default.temporaryDirectory.appendingPathComponent("mac-sleepless.sudoers")
+        let draft = FileManager.default.temporaryDirectory.appendingPathComponent("sleepless.sudoers")
         do {
             try rule.write(to: draft, atomically: true, encoding: .utf8)
         } catch {
@@ -86,7 +86,7 @@ enum SleepControl {
             + "|| { /bin/rm -f \(shellQuote(staged)); exit 1; }"
         let source =
             "do shell script \(appleScriptQuote(command)) with administrator privileges "
-            + "with prompt \"mac-sleepless needs your password once to keep the Mac awake with the lid closed.\""
+            + "with prompt \"Sleepless needs your password once to keep the Mac awake with the lid closed.\""
         var errorInfo: NSDictionary?
         NSAppleScript(source: source)?.executeAndReturnError(&errorInfo)
         guard let errorInfo else { return }

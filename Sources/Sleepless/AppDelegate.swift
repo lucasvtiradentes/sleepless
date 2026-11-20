@@ -3,10 +3,10 @@ import AppKit
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private static let checkInterval: TimeInterval = 30
-    /// Written by install-startup.sh before it restarts the app, so the old process keeps the Mac
+    /// Written by scripts/install.sh before it restarts the app, so the old process keeps the Mac
     /// awake through the swap instead of letting a closed-lid Mac fall asleep mid-install.
     static let handoffMarker = FileManager.default.homeDirectoryForCurrentUser
-        .appendingPathComponent("Library/Application Support/mac-sleepless/handoff")
+        .appendingPathComponent("Library/Application Support/sleepless/handoff")
     private static let handoffMaxAge: TimeInterval = 120
 
     private var statusItem: NSStatusItem?
@@ -16,6 +16,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var lidMonitor: LidMonitor?
     private let lidActions = LidActions()
     private let settingsWindow = SettingsWindow()
+    private let updater = Updater()
 
     private var wantsAwake: Bool {
         get { AppSettings.wantsAwake }
@@ -37,16 +38,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         NotificationCenter.default.addObserver(
             self, selector: #selector(thermalStateChanged),
             name: ProcessInfo.thermalStateDidChangeNotification, object: nil)
-        timer = Timer.scheduledTimer(withTimeInterval: Self.checkInterval, repeats: true) { [weak self] _ in
+        let timer = Timer(timeInterval: Self.checkInterval, repeats: true) { [weak self] _ in
             MainActor.assumeIsolated { self?.enforce() }
         }
+        // Common modes keep the battery and heat checks running while a modal alert is open.
+        RunLoop.main.add(timer, forMode: .common)
+        self.timer = timer
 
         // Only transitions act, so a restart with the lid already closed does not lock or mute.
         lidMonitor = LidMonitor { [weak self] closed in self?.lidChanged(closed) }
 
         if wantsAwake { apply(true) }
         refreshIcon()
-        Log.write("started, keep awake \(SleepControl.isSleepDisabled() ? "on" : "off")")
+        Log.write("started \(Updater.version), keep awake \(SleepControl.isSleepDisabled() ? "on" : "off")")
     }
 
     func applicationWillTerminate(_ notification: Notification) {
@@ -90,6 +94,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let settings = NSMenuItem(title: "Settings", action: #selector(showOptionsWindow), keyEquivalent: "")
         settings.target = self
         menu.addItem(settings)
+        let update = NSMenuItem(title: "Check for Updates", action: #selector(checkForUpdates), keyEquivalent: "")
+        update.target = self
+        menu.addItem(update)
         // A custom selector instead of terminate(_:), which macOS 26 decorates with an icon.
         let quit = NSMenuItem(title: "Quit", action: #selector(quitApp), keyEquivalent: "")
         quit.target = self
@@ -107,6 +114,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     @objc private func showOptionsWindow() {
         settingsWindow.show()
+    }
+
+    @objc private func checkForUpdates() {
+        updater.checkForUpdates()
     }
 
     @objc private func quitApp() {
