@@ -25,3 +25,7 @@ make check      # swift-format lint
 ```
 
 Quit other lid-sleep tools, such as Clamshell or Amphetamine, so they do not reset the flag.
+
+## Remote screen
+
+To see and control the Mac from an iPhone with the lid closed, follow [docs/remote-screen.md](docs/remote-screen.md): macOS Screen Sharing, Tailscale and RealVNC Viewer.
