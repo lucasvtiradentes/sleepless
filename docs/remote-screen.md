@@ -53,6 +53,7 @@ The iPhone first shows a macOS login window, even when the Mac is open and unloc
 
 1. Type your macOS user and password.
 2. If macOS asks, choose to share the current screen, so you land on your own desktop with your apps.
+3. With Lock the Mac on in mac-sleepless Settings, the Mac locks when the lid closes, so type your password once more on the lock screen.
 
 ## 6. Control the Mac
 
@@ -63,12 +64,13 @@ The iPhone first shows a macOS login window, even when the Mac is open and unloc
 
 ## Troubleshooting
 
-| Symptom                                   | Cause and fix                                                                              |
-|-------------------------------------------|--------------------------------------------------------------------------------------------|
-| Server not running or incompatible        | Turn on VNC viewers may control screen with password, as in section 2                      |
-| Cannot connect at all                     | Turn on Tailscale on the iPhone; check that the Mac is awake and the menu bar shows a cup  |
-| Login window every time                   | Expected with the VNC password; type your macOS user and password                          |
-| Mac fell asleep                           | mac-sleepless turns off below 15% battery or at critical heat; plug the Mac in             |
+| Symptom                            | Cause and fix                                                                               |
+|------------------------------------|---------------------------------------------------------------------------------------------|
+| Server not running or incompatible | Turn on VNC viewers may control screen with password, as in section 2                       |
+| Cannot connect at all              | Turn on Tailscale on the iPhone; check that the Mac is awake and the menu bar shows a cup   |
+| Login window every time            | Expected with the VNC password; type your macOS user and password                           |
+| Black screen at first              | mac-sleepless turned the display off; tap or move the pointer to wake it                    |
+| Mac fell asleep                    | mac-sleepless turns off below the battery level in Settings or at critical heat; plug it in |
 
 To check the Mac side from a terminal:
 
