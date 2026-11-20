@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_call:
+
+concurrency:
+  # github.workflow is the caller's name when called, so a release never queues behind push CI.
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  SWIFT_FORMAT_VERSION: 602.0.0
+
+jobs:
+  lint:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v5
+
+      # Homebrew only ships the newest swift-format, and its rules change between versions,
+      # so build the version the Makefile pins.
+      - name: Restore swift-format
+        id: swift-format-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/swift-format/bin
+          key: swift-format-${{ env.SWIFT_FORMAT_VERSION }}-${{ runner.os }}-${{ runner.arch }}
+
+      - name: Build swift-format
+        if: steps.swift-format-cache.outputs.cache-hit != 'true'
+        run: |
+          git clone --depth 1 --branch "$SWIFT_FORMAT_VERSION" https://github.com/swiftlang/swift-format.git /tmp/swift-format
+          swift build -c release --package-path /tmp/swift-format --product swift-format
+          mkdir -p ~/swift-format/bin
+          cp "$(swift build -c release --package-path /tmp/swift-format --show-bin-path)/swift-format" ~/swift-format/bin/
+
+      - name: Check format
+        run: |
+          export PATH="$HOME/swift-format/bin:$PATH"
+          make check
+
+  scripts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Check shell scripts
+        run: shellcheck scripts/*.sh .github/scripts/*.sh
+
+      - name: Check workflows
+        run: |
+          bash <(curl -fsSL https://raw.githubusercontent.com/rhysd/actionlint/v1.7.7/scripts/download-actionlint.bash) 1.7.7
+          ./actionlint -color
+
+  build:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Build universal binary
+        run: make package
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sleepless-macos-universal
+          path: dist/
