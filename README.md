@@ -20,26 +20,32 @@ Sleepless is a free macOS menu bar app that keeps a MacBook awake with the lid c
 
 ## ❓ Motivation
 
-macOS sleeps the moment you close the lid, even with `caffeinate` running, and the apps that fix it are paid. I wanted to close the lid and keep my AI coding agents working while I follow them from my phone.
+I wanted to use my MacBook like a Mac mini: close the lid, connect to it from anywhere over Tailscale and keep my AI agents running while I follow them from my phone. macOS does not allow that by default, so I built this small app.
 
-Other ways to use it:
+<div align="center">
+
+<details>
+<summary>Other ways to use it</summary>
+<br />
+
+<div align="left">
 
 - Let a long build, download or script finish with the lid closed.
 - Keep your work running while you move to another place, and pick it up there.
-- Use the MacBook like a Mac mini: everything runs with the lid open or closed.
+
+</div>
+
+</details>
+
+</div>
 
 ## ⭐ Features
 
-- One click to keep the Mac awake with the lid closed, on battery or plugged in, no external display needed.
-- When the lid closes: turns off the display, mutes the sound and locks the Mac; each one can be switched off.
-- Safety first: turns itself off below a battery level (15% by default), at critical heat, and when you quit it.
-- Remembers your choice across restarts and starts at login.
-- Updates from the menu with Check for Updates.
-- Small and open: under 700 lines of Swift, no telemetry, network only when you check for updates.
+- Keeps the Mac awake with the lid closed, on battery or plugged in, with no external display.
+- When the lid closes, turns off the display, mutes the sound and locks the Mac.
+- Turns itself off on low battery or critical heat.
 
 ## 🚀 Quick Start
-
-### Install
 
 Needs macOS 14 or later, on Apple Silicon or Intel.
 
@@ -49,17 +55,41 @@ curl -fsSL https://raw.githubusercontent.com/lucasvtiradentes/sleepless/main/scr
 
 Then click the moon in the menu bar and choose Keep Awake. macOS asks for your password once, and the icon turns into a cup. Close the lid: the Mac keeps running.
 
-### Update
+<div align="center">
+
+<details>
+<summary>Update</summary>
+<br />
+
+<div align="left">
 
 Choose Check for Updates in the menu, or run the install command again. Both keep the Mac awake while Sleepless restarts.
 
-### Uninstall
+</div>
+
+</details>
+
+</div>
+
+<div align="center">
+
+<details>
+<summary>Uninstall</summary>
+<br />
+
+<div align="left">
 
 Removes the app, its login item and the password rule, so the Mac sleeps with the lid closed again.
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/lucasvtiradentes/sleepless/main/scripts/uninstall.sh | bash
 ```
+
+</div>
+
+</details>
+
+</div>
 
 ## 📖 Guides
 
