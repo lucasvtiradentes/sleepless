@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
+# Removes Sleepless, its login agent and its sudoers rule, and lets the Mac sleep with the lid closed again.
+#   curl -fsSL https://raw.githubusercontent.com/lucasvtiradentes/sleepless/main/scripts/uninstall.sh | bash
 set -euo pipefail
 
-APP_NAME="mac-sleepless"
-APP_LABEL="dev.lucasvtiradentes.mac-sleepless"
-SUDOERS_PATH="/etc/sudoers.d/mac-sleepless"
+APP_NAME="sleepless"
+APP_LABEL="dev.lucasvtiradentes.sleepless"
+SUDOERS_PATH="/etc/sudoers.d/sleepless"
 
 stop_agent() {
   # bootout sends SIGTERM, and the app turns lid sleep back on before it exits.
@@ -13,7 +15,7 @@ stop_agent() {
 
 remove_files() {
   rm -f "$HOME/Library/LaunchAgents/$APP_LABEL.plist"
-  rm -f "$HOME/Library/Application Support/$APP_NAME/bin/$APP_NAME"
+  rm -rf "$HOME/Library/Application Support/$APP_NAME"
 }
 
 remove_sudoers_rule() {
