@@ -60,7 +60,13 @@ PLIST
 }
 
 stop_running_app() {
+  local handoff_marker="$1"
   local tries=0
+
+  # Tells the running app this is an update, so it keeps the Mac awake while it exits;
+  # otherwise a Mac with the lid closed would sleep before the new app starts.
+  mkdir -p "$(dirname "$handoff_marker")"
+  touch "$handoff_marker"
 
   launchctl bootout "gui/$(id -u)/$APP_LABEL" 2>/dev/null || true
   pkill -TERM -x "$APP_NAME" 2>/dev/null || true
@@ -69,6 +75,14 @@ stop_running_app() {
     sleep 0.1
     tries=$((tries + 1))
   done
+}
+
+# If the new app cannot start, nothing watches battery and heat, so let the Mac sleep again.
+restore_lid_sleep() {
+  local handoff_marker="$1"
+
+  rm -f "$handoff_marker"
+  sudo -n /usr/bin/pmset -a disablesleep 0 2>/dev/null || true
 }
 
 start_launch_agent() {
@@ -81,14 +95,18 @@ start_launch_agent() {
 }
 
 main() {
-  local script_dir repo_dir target_bin plist_path
+  local script_dir repo_dir target_bin plist_path handoff_marker
   script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
   repo_dir="$(cd -- "$script_dir/.." && pwd)"
   target_bin="$HOME/Library/Application Support/$APP_NAME/bin/$APP_NAME"
   plist_path="$HOME/Library/LaunchAgents/$APP_LABEL.plist"
 
-  stop_running_app
+  handoff_marker="$HOME/Library/Application Support/$APP_NAME/handoff"
+
+  # Build and swap the binary while the old app still runs, so a failed build leaves it guarding.
   build_and_install_binary "$repo_dir" "$target_bin"
+  trap 'restore_lid_sleep "$handoff_marker"' ERR
+  stop_running_app "$handoff_marker"
   write_launch_agent "$plist_path" "$target_bin"
   start_launch_agent "$plist_path"
   printf "Installed %s and started it at login: %s\n" "$APP_NAME" "$plist_path"
