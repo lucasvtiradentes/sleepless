@@ -10,6 +10,8 @@ SUDOERS_PATH="/etc/sudoers.d/sleepless"
 stop_agent() {
   # bootout sends SIGTERM, and the app turns lid sleep back on before it exits.
   launchctl bootout "gui/$(id -u)/$APP_LABEL" 2>/dev/null || true
+  # Forget an "Open at login" off choice, so a later install starts at login again.
+  launchctl enable "gui/$(id -u)/$APP_LABEL" 2>/dev/null || true
   pkill -TERM -x "$APP_NAME" 2>/dev/null || true
 }
 

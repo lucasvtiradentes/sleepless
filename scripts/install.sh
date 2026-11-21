@@ -160,13 +160,24 @@ restore_lid_sleep() {
   sudo -n /usr/bin/pmset -a disablesleep 0 2>/dev/null || true
 }
 
+# The Settings switch "Open at login" stores its choice as launchd's disable override.
+# Recent launchd prints "label" => disabled, older versions => true.
+login_disabled() {
+  launchctl print-disabled "gui/$(id -u)" 2>/dev/null |
+    grep -E "\"$APP_LABEL\" => (disabled|true)" >/dev/null
+}
+
 start_launch_agent() {
   local plist_path="$1"
-  local domain
+  local domain was_disabled=false
   domain="gui/$(id -u)"
 
+  if login_disabled; then was_disabled=true; fi
+  # bootstrap refuses a disabled job, so enable it to start now, then restore the choice:
+  # disable only affects the next login and leaves the running app alone.
   launchctl enable "$domain/$APP_LABEL"
   launchctl bootstrap "$domain" "$plist_path"
+  [ "$was_disabled" = false ] || launchctl disable "$domain/$APP_LABEL"
 }
 
 WORK_DIR=""

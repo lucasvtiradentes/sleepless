@@ -6,9 +6,19 @@ struct SettingsView: View {
     @AppStorage(AppSettings.muteKey) private var mute = true
     @AppStorage(AppSettings.lockKey) private var lock = true
     @AppStorage(AppSettings.minimumBatteryKey) private var minimumBattery = AppSettings.defaultMinimumBattery
+    @State private var openAtLogin = LoginItem.isEnabled
 
     var body: some View {
         Form {
+            Section("General") {
+                Toggle("Open at login", isOn: $openAtLogin)
+                    .onChange(of: openAtLogin) { _, enabled in
+                        // A failed change flips the switch back to launchd's real state; that flip
+                        // re-enters here and stops at the guard, since it already matches launchd.
+                        guard enabled != LoginItem.isEnabled else { return }
+                        if !LoginItem.setEnabled(enabled) { openAtLogin = LoginItem.isEnabled }
+                    }
+            }
             Section("When the lid closes") {
                 Toggle("Turn off the display", isOn: $displayOff)
                 Toggle("Mute sound", isOn: $mute)

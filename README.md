@@ -44,6 +44,7 @@ I wanted to use my MacBook like a Mac mini: close the lid, connect to it from an
 - Keeps the Mac awake with the lid closed, on battery or plugged in, with no external display.
 - When the lid closes, turns off the display, mutes the sound and locks the Mac.
 - Turns itself off on low battery or critical heat.
+- Opens at login and turns Keep Awake back on after a restart; switch it off in Settings.
 
 ## 🚀 Quick Start
 
@@ -123,7 +124,7 @@ curl -fsSL https://raw.githubusercontent.com/lucasvtiradentes/sleepless/main/scr
 - macOS ignores `caffeinate` on lid close; only the system `SleepDisabled` flag stops it, set with `pmset -a disablesleep 1`.
 - That needs root, so the first time you turn it on, Sleepless installs `/etc/sudoers.d/sleepless`, which allows only `pmset -a disablesleep 0` and `1` without a password.
 - The icon always reads the real flag, so it stays right if something else changes it.
-- It runs as a login agent from `~/Library/Application Support/sleepless`, and logs every lid change to `~/Library/Logs/dev.lucasvtiradentes.sleepless.out.log`.
+- It runs as a login agent from `~/Library/Application Support/sleepless`, and logs every lid change to `~/Library/Logs/dev.lucasvtiradentes.sleepless.out.log`. Open at login in Settings runs `launchctl enable` or `disable` on that agent, and updates keep the choice.
 - Quit other lid sleep tools, such as Amphetamine or Clamshell, so they do not reset the flag.
 
 </div>
